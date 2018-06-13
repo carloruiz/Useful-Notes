@@ -106,11 +106,30 @@ set autoindent
 set backspace=indent,eol,start 
 set paste "pasting retains format
 set ruler "shows line numbers in bottom right
+set number
+highlight LineNr term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE gui=NONE guifg=DarkGrey guibg=NONE
+set listchars=tab:>\ 
 
 autocmd FileType python setlocal expandtab "replace tabs with spaces for python files 
+autocmd FileType javascript,html setlocal tabstop=2
+autocmd FileType javascript,html setlocal shiftwidth=2
+autocmd FileType javascript,html setlocal softtabstop=2
+
+let g:go_highlight_structs = 1 
+let g:go_highlight_methods = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
 
 
 "set number "show line numbers
+
+filetype off
+filetype plugin indent off
+set runtimepath+=$GOROOT/misc/vim
+filetype plugin indent on
+syntax on
+
 set showcmd "show command in bottom bar
 set wildmenu "visual autocomplete for command menu
 set showmatch "highlight matching parens, brackes etc
@@ -124,6 +143,8 @@ set nobackup
 
 call plug#begin('~/.vim/plugged')
 Plug 'https://github.com/pangloss/vim-javascript.git'
+Plug 'scrooloose/nerdtree' 
+Plug 'fatih/vim-go'
 call plug#end()
 
 "map <S-Up> {
