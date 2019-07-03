@@ -111,15 +111,12 @@ highlight LineNr term=bold cterm=NONE ctermfg=DarkGrey ctermbg=NONE gui=NONE gui
 set listchars=tab:>\ 
 
 autocmd FileType python setlocal expandtab "replace tabs with spaces for python files 
-autocmd FileType javascript,html setlocal tabstop=2
-autocmd FileType javascript,html setlocal shiftwidth=2
-autocmd FileType javascript,html setlocal softtabstop=2
+autocmd FileType yaml,css,javascript,html setlocal ts=2 sts=2 sw=2 expandtab
+autocmd BufEnter *.js,*.css,*.html,*.py colorscheme molokai
+autocmd FileType .yml set listchars=eol:\n,tab:>-
+"autocmd BufEnter *.css colorscheme molokai
+"autocmd BufEnter *.html colorscheme molokai
 
-let g:go_highlight_structs = 1 
-let g:go_highlight_methods = 1
-let g:go_highlight_functions = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_build_constraints = 1
 
 
 "set number "show line numbers
@@ -128,7 +125,7 @@ filetype off
 filetype plugin indent off
 set runtimepath+=$GOROOT/misc/vim
 filetype plugin indent on
-syntax on
+syntax enable
 
 set showcmd "show command in bottom bar
 set wildmenu "visual autocomplete for command menu
@@ -142,10 +139,34 @@ nmap <S-Tab> gT
 set nobackup
 
 call plug#begin('~/.vim/plugged')
-Plug 'https://github.com/pangloss/vim-javascript.git'
+Plug 'pangloss/vim-javascript'
 Plug 'scrooloose/nerdtree' 
 Plug 'fatih/vim-go'
+Plug 'maxmellon/vim-jsx-pretty'
+Plug 'flazz/vim-colorschemes'
+Plug 'jistr/vim-nerdtree-tabs'
 call plug#end()
+
+let g:go_highlight_structs = 1 
+let g:go_highlight_methods = 1
+let g:go_highlight_functions = 1
+let g:go_highlight_function_calls = 1
+let g:go_highlight_operators = 1
+let g:go_highlight_build_constraints = 1
+let g:go_highlight_types = 1
+let g:go_highlight_fields = 1
+let g:go_doc_keywordprg_enabled = 0
+
+let g:vim_jsx_pretty_colorful_config = 1
+
+
+nmap <S-l> <S-Right>
+nmap <S-h> <S-Left>
+nmap <s-K> {
+nmap <s-J> }
+
+vmap <S-l> <S-Right>
+vmap <S-h> <S-Left>
 
 "map <S-Up> {
 "map <S-Down> }
