@@ -1,0 +1,69 @@
+#############################################################
+# Carlo's Specific Tastes 
+#############################################################
+
+# Add new line before every new bash prompt line
+export PROMPT_COMMAND="echo"
+# Bash prompt configuration
+export PS1="\[\033[90m\]\w $ \[\033[00m\]"
+
+# Set case-insensitive autocomplete
+bind "set completion-ignore-case on"
+# Show all options when autocomplete is ambiguous
+bind "set show-all-if-ambiguous on"
+
+alias b="cd .."
+alias python="/usr/local/bin/python3"
+alias v="/usr/local/Cellar/vim/8.2.2000/bin/vi"
+alias kube="kubectl"
+alias gotags="ctags -R --tag-relative --languages=Go ."
+
+# Add markers to files to distinguish directories, files, executables 
+alias ls="ls -G"
+
+export GOPATH=~/go
+export GOBIN=$GOPATH/bin
+export GOROOT=$(go env GOROOT)
+export PATH=${PATH}:$GOBIN
+
+# bash/zsh completion support for core Git.
+if [ -f ~/.git-completion.bash ]; then
+  source ~/.git-completion.bash
+fi
+
+#############################################################
+# Cockroach Labs Stuff 
+#############################################################
+
+export MSO=$GOPATH/src/github.com/cockroachlabs/managed-service
+export PATH=${PATH}:$MSO/bin
+export PATH=${PATH}:$MSO/scripts
+export mso="-IR --exclude=node_modules"
+
+# Set kubectl context
+alias skube='kubectl config use-context gke_cockroach-managed-staging_us-east1_control-plane'
+alias pkube='kubectl config use-context gke_cockroach-cloud-managed_us-east1_control-plane'
+
+# Open SQL shell
+alias psql='gcloud beta compute --project "cockroach-cloud-managed" ssh --zone "us-east1-b" "us-east1-node-0000" --  -t "cd ../cockroach; sudo ./cockroach sql --certs-dir certs -d management_console_production --set display_format=records"; bash -l'
+alias ssql='gcloud beta compute --project "cockroach-managed-staging" ssh --zone "us-east1-b" "us-east1-node-0000" --  -t "cd ../cockroach; sudo ./cockroach sql --certs-dir certs -d management_console_production --set display_format=records"; bash -l'
+alias customersql='kubectl exec -it cockroachdb-0 -c cockroachdb -- /cockroach/cockroach sql --certs-dir=/cockroach/cockroach-certs'
+
+# Open an SSH tunnel to the Control Plane bastion node
+alias pbastion='gcloud beta compute --project "cockroach-cloud-managed" ssh --zone "us-east1-b" "bastion" -- -N -D localhost:5000'
+alias sbastion='gcloud beta compute --project "cockroach-managed-staging" ssh --zone "us-east1-b" "bastion" -- -N -D localhost:5000'
+
+#############################################################
+# Added Automatically 
+#############################################################
+export NVM_DIR="$HOME/.nvm"
+  [ -s "/usr/local/opt/nvm/nvm.sh" ] && . "/usr/local/opt/nvm/nvm.sh"  # This loads nvm
+  [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/carloruiz/Downloads/google-cloud-sdk/path.bash.inc' ]; then . '/Users/carloruiz/Downloads/google-cloud-sdk/path.bash.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/carloruiz/Downloads/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/carloruiz/Downloads/google-cloud-sdk/completion.bash.inc'; fi
+
+export PATH="/usr/local/opt/go@1.14/bin:$PATH"
