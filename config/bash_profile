@@ -1,23 +1,40 @@
 #############################################################
 # Carlo's Specific Tastes 
 #############################################################
+parse_git_branch() {
+     git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
+}
 
-# Add new line before every new bash prompt line
-export PROMPT_COMMAND="echo"
-# Bash prompt configuration
-export PS1="\[\033[90m\]\w $ \[\033[00m\]"
+# Silence Mac complaining that we are not using zsh. 
+export BASH_SILENCE_DEPRECATION_WARNING=1
+# Make the function accessible from nvim's terminal.
+export -f parse_git_branch
+# Cap the in memory history to 2k lines
+export HISTSIZE=5000
+# Cat the history file to 10k lines
+export HISTFILESIZE=10000
+# Lines matching the previous history entry to not be saved
+export HISTCONTROL=ignoredups
 
-# Set case-insensitive autocomplete
+# Immediately append to the history file and add new line before every
+# new bash prompt line
+export PROMPT_COMMAND="history -a; echo"
+# Prompt configuration
+export PS1='\033[90m\][\D{%Y%m%d %H:%M:%S}] $(parse_git_branch) \[\033[33m\]${PWD#"${PWD%/*/*}/"} \[\033[00m\]: '
+
+# Auto complete
+[[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
+
+# Set case-insensitive autocomplete (Bash specific)
 bind "set completion-ignore-case on"
 # Show all options when autocomplete is ambiguous
 bind "set show-all-if-ambiguous on"
 
 alias b="cd .."
 alias python="/usr/local/bin/python3"
-alias v="/usr/local/Cellar/vim/8.2.2000/bin/vi"
+alias v="/usr/local/bin/nvim"
 alias kube="kubectl"
 alias gotags="ctags -R --tag-relative --languages=Go ."
-
 # Add markers to files to distinguish directories, files, executables 
 alias ls="ls -G"
 
@@ -39,19 +56,29 @@ export MSO=$GOPATH/src/github.com/cockroachlabs/managed-service
 export PATH=${PATH}:$MSO/bin
 export PATH=${PATH}:$MSO/scripts
 export mso="-IR --exclude=node_modules"
+export COCKROACH_DEV_LICENSE=<redacted>
+
+# Open gce worker.
+alias gce='$MSO/../../cockroachdb/cockroach/scripts/gceworker.sh start'
 
 # Set kubectl context
 alias skube='kubectl config use-context gke_cockroach-managed-staging_us-east1_control-plane'
 alias pkube='kubectl config use-context gke_cockroach-cloud-managed_us-east1_control-plane'
 
 # Open SQL shell
-alias psql='gcloud beta compute --project "cockroach-cloud-managed" ssh --zone "us-east1-b" "us-east1-node-0000" --  -t "cd ../cockroach; sudo ./cockroach sql --certs-dir certs -d management_console_production --set display_format=records"; bash -l'
-alias ssql='gcloud beta compute --project "cockroach-managed-staging" ssh --zone "us-east1-b" "us-east1-node-0000" --  -t "cd ../cockroach; sudo ./cockroach sql --certs-dir certs -d management_console_production --set display_format=records"; bash -l'
-alias customersql='kubectl exec -it cockroachdb-0 -c cockroachdb -- /cockroach/cockroach sql --certs-dir=/cockroach/cockroach-certs'
+alias psql='kubectl --context crl-prod-8p9.us-east1 exec -it cockroachdb-0 -c cockroachdb -n us-east1 -- /cockroach/cockroach sql --certs-dir=/cockroach/cockroach-certs --format=records -d management_console_production'
+alias ssql='kubectl --context crl-staging-66c3.us-east1 exec -it cockroachdb-0 -c cockroachdb -- /cockroach/cockroach sql --certs-dir=/cockroach/cockroach-certs --format=records -d management_console_production'
+alias customersql='kubectl exec -it cockroachdb-0 -c cockroachdb -- /cockroach/cockroach sql --certs-dir=/cockroach/cockroach-certs --format=records'
+alias customersh='kubectl exec -it cockroachdb-0 -c cockroachdb -- /bin/sh'
+alias sdbtunnel='kube config use-context crl-staging-66c3.us-east1 && kube port-forward cockroachdb-0 26257:26257'
+alias enclave='gcloud beta compute ssh --zone "us-east1-b" "secure-enclave-carlo" --tunnel-through-iap --project "cockroach-cloud-secure-enclave"'
 
 # Open an SSH tunnel to the Control Plane bastion node
 alias pbastion='gcloud beta compute --project "cockroach-cloud-managed" ssh --zone "us-east1-b" "bastion" -- -N -D localhost:5000'
 alias sbastion='gcloud beta compute --project "cockroach-managed-staging" ssh --zone "us-east1-b" "bastion" -- -N -D localhost:5000'
+
+# local db
+alias localsql='cockroach sql --insecure --format=records --database=management_console_production'
 
 #############################################################
 # Added Automatically 
@@ -65,5 +92,3 @@ if [ -f '/Users/carloruiz/Downloads/google-cloud-sdk/path.bash.inc' ]; then . '/
 
 # The next line enables shell command completion for gcloud.
 if [ -f '/Users/carloruiz/Downloads/google-cloud-sdk/completion.bash.inc' ]; then . '/Users/carloruiz/Downloads/google-cloud-sdk/completion.bash.inc'; fi
-
-export PATH="/usr/local/opt/go@1.14/bin:$PATH"
