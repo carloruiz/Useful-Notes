@@ -20,7 +20,7 @@ export HISTCONTROL=ignoredups
 # new bash prompt line
 export PROMPT_COMMAND="history -a; echo"
 # Prompt configuration
-export PS1='\033[90m\][\D{%Y%m%d %H:%M:%S}] $(parse_git_branch) \[\033[33m\]${PWD#"${PWD%/*/*}/"} \[\033[00m\]: '
+export PS1='\[\033[90m\][\D{%Y%m%d %H:%M:%S}] $(parse_git_branch) \[\033[33m\]${PWD#"${PWD%/*/*}/"} \[\033[00m\]: '
 
 # Auto complete
 [[ -r "/usr/local/etc/profile.d/bash_completion.sh" ]] && . "/usr/local/etc/profile.d/bash_completion.sh"
